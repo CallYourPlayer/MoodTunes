@@ -1,11 +1,9 @@
-# Development-oriented image for Docker Compose.
 FROM ruby:3.3.6-slim
 
-ENV RAILS_ENV=development \
+ENV RAILS_ENV=production \
     BUNDLE_PATH=/usr/local/bundle \
     LANG=C.UTF-8
 
-# System dependencies: build tools + PostgreSQL client libs.
 RUN apt-get update -qq && \
     apt-get install -y --no-install-recommends \
       build-essential \
@@ -17,17 +15,22 @@ RUN apt-get update -qq && \
 
 WORKDIR /app
 
-# Install gems first for better layer caching.
-COPY Gemfile Gemfile.lock* ./
-RUN gem install bundler && bundle install
+# Bundle install
+COPY Gemfile Gemfile.lock ./
+RUN gem install bundler && \
+    bundle install --without development test
 
-# Copy the rest of the application.
+# App
 COPY . .
 
+# Precompile assets
+RUN bundle exec rails assets:precompile
+
+# Permessi
 RUN chmod +x bin/* || true
 
-ENTRYPOINT ["bin/docker-entrypoint"]
-
+# Porta dinamica
 EXPOSE 3000
 
-CMD ["bin/rails", "server", "-b", "0.0.0.0", "-p", "3000"]
+# ✅ usa PORT di Render
+CMD ["sh", "-c", "bundle exec rails server -b 0.0.0.0 -p ${PORT:-3000}"]
