@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title><%= content_for?(:title) ? yield(:title) : "MoodTunes" %></title>
+    <meta name="description" content="Genera playlist musicali a partire da una descrizione, con l'aiuto dell'AI.">
+    <%= csrf_meta_tags %>
+    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+  <body class="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 text-white antialiased">
+    <header class="border-b border-white/10">
+      <div class="mx-auto flex max-w-4xl items-center justify-between px-4 py-4">
+        <%= link_to root_path, class: "flex items-center gap-2 text-lg font-bold tracking-tight" do %>
+          <span class="text-2xl">🎧</span>
+          <span>Mood<span class="text-indigo-400">Tunes</span></span>
+        <% end %>
+        <span class="text-xs text-white/40">playlist generate con l'AI</span>
+      </div>
+    </header>
+
+    <main class="mx-auto max-w-4xl px-4 py-8">
+      <% if flash[:alert] %>
+        <div class="mb-6 rounded-lg border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+          <%= flash[:alert] %>
+        </div>
+      <% end %>
+      <% if flash[:notice] %>
+        <div class="mb-6 rounded-lg border border-emerald-500/40 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">
+          <%= flash[:notice] %>
+        </div>
+      <% end %>
+
+      <%= yield %>
+    </main>
+
+    <footer class="mx-auto max-w-4xl px-4 py-10 text-center text-xs text-white/30">
+      Brani forniti da Deezer · Suggerimenti generati da Claude
+    </footer>
+  </body>
+</html>

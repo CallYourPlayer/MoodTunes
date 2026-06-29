@@ -1,0 +1,54 @@
+<section class="mb-10 text-center">
+  <h1 class="text-3xl font-bold sm:text-4xl">Descrivi il momento, ricevi la playlist.</h1>
+  <p class="mx-auto mt-3 max-w-xl text-white/60">
+    Racconta cosa stai facendo (es. <em>"lavoro al pc"</em>, <em>"corsa"</em>,
+    <em>"viaggio in macchina"</em>) e lascia che l'AI costruisca la colonna sonora perfetta.
+  </p>
+</section>
+
+<%= form_with url: playlists_path, method: :post, data: { generate_form: true },
+      class: "space-y-8 rounded-2xl border border-white/10 bg-white/5 p-6 sm:p-8" do |f| %>
+
+  <div>
+    <%= label_tag :description, "Cosa stai facendo?", class: "mb-2 block text-sm font-medium" %>
+    <%= text_area_tag :description, nil,
+          rows: 3,
+          required: true,
+          placeholder: "Es. Sto lavorando al pc e devo concentrarmi...",
+          class: "w-full rounded-xl border border-white/10 bg-slate-900/60 px-4 py-3 text-white placeholder-white/30 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/40" %>
+  </div>
+
+  <div>
+    <span class="mb-3 block text-sm font-medium">Mood <span class="text-white/40">(opzionale)</span></span>
+    <div class="flex flex-wrap gap-2">
+      <% @moods.each do |mood| %>
+        <label class="cursor-pointer">
+          <input type="radio" name="mood" value="<%= mood %>" class="peer sr-only">
+          <span class="inline-block rounded-full border border-white/10 bg-slate-900/60 px-4 py-2 text-sm capitalize transition peer-checked:border-indigo-400 peer-checked:bg-indigo-500/20 peer-checked:text-indigo-200 hover:border-white/30">
+            <%= mood %>
+          </span>
+        </label>
+      <% end %>
+    </div>
+  </div>
+
+  <div>
+    <span class="mb-3 block text-sm font-medium">Generi preferiti <span class="text-white/40">(opzionale)</span></span>
+    <div class="flex flex-wrap gap-2">
+      <% @genres.each do |genre| %>
+        <label class="cursor-pointer">
+          <input type="checkbox" name="genres[]" value="<%= genre %>" class="peer sr-only">
+          <span class="inline-block rounded-full border border-white/10 bg-slate-900/60 px-4 py-2 text-sm capitalize transition peer-checked:border-fuchsia-400 peer-checked:bg-fuchsia-500/20 peer-checked:text-fuchsia-200 hover:border-white/30">
+            <%= genre %>
+          </span>
+        </label>
+      <% end %>
+    </div>
+  </div>
+
+  <button type="submit" data-submit
+          class="w-full rounded-xl bg-indigo-500 px-6 py-3 font-semibold text-white transition hover:bg-indigo-400 disabled:cursor-not-allowed disabled:opacity-60">
+    Genera playlist
+  </button>
+  <p class="text-center text-xs text-white/30">La generazione può richiedere qualche secondo.</p>
+<% end %>

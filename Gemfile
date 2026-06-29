@@ -1,0 +1,23 @@
+source "https://rubygems.org"
+
+ruby "3.3.6"
+
+gem "rails", "~> 7.1.3"
+gem "pg", "~> 1.5"
+gem "puma", "~> 6.4"
+
+# Asset pipeline + front-end
+gem "sprockets-rails"
+gem "importmap-rails"
+gem "tailwindcss-rails"
+
+# External services
+gem "httparty"          # Deezer Search API
+gem "anthropic"         # Official Anthropic Ruby SDK (Claude)
+
+gem "bootsnap", require: false
+gem "tzinfo-data", platforms: %i[windows jruby]
+
+group :development do
+  gem "web-console"
+end

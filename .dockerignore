@@ -1,0 +1,11 @@
+.git
+.gitignore
+/log/*
+/tmp/*
+/public/assets
+/app/assets/builds/*
+/node_modules
+.env
+.env.*
+!.env.example
+README.md

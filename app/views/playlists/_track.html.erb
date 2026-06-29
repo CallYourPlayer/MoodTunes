@@ -1,0 +1,38 @@
+<li data-uid="<%= track["uid"] %>"
+    class="group flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-3 py-3 sm:gap-4">
+  <button type="button" data-drag-handle
+          title="Trascina per riordinare"
+          class="cursor-grab select-none px-1 text-lg text-white/30 hover:text-white/70 active:cursor-grabbing">
+    ⠿
+  </button>
+
+  <% if track["cover"].present? %>
+    <img src="<%= track["cover"] %>" alt=""
+         class="h-12 w-12 flex-none rounded-md object-cover" loading="lazy">
+  <% else %>
+    <div class="flex h-12 w-12 flex-none items-center justify-center rounded-md bg-slate-800 text-white/40">♪</div>
+  <% end %>
+
+  <div class="min-w-0 flex-1">
+    <p class="truncate font-medium"><%= track["title"] %></p>
+    <p class="truncate text-sm text-white/50"><%= track["artist"] %></p>
+  </div>
+
+  <% if track["preview"].present? %>
+    <audio controls preload="none" src="<%= track["preview"] %>"
+           class="hidden h-8 w-40 sm:block"></audio>
+  <% end %>
+
+  <% if track["deezer_url"].present? %>
+    <a href="<%= track["deezer_url"] %>" target="_blank" rel="noopener"
+       class="flex-none rounded-lg border border-white/10 px-3 py-1.5 text-xs font-medium text-white/70 transition hover:border-white/30 hover:text-white">
+      Deezer ↗
+    </a>
+  <% end %>
+
+  <button type="button" data-remove
+          title="Rimuovi"
+          class="flex-none rounded-lg border border-transparent px-2 py-1.5 text-xs text-white/40 transition hover:border-red-500/40 hover:text-red-300">
+    ✕
+  </button>
+</li>

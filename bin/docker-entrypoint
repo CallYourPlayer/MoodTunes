@@ -1,0 +1,16 @@
+#!/bin/bash
+set -e
+
+# Remove a possibly pre-existing server.pid for Rails.
+rm -f /app/tmp/pids/server.pid
+
+# Install gems if the bundle volume is empty or the lockfile changed.
+bundle check || bundle install
+
+# Create and migrate the database (idempotent).
+bundle exec rails db:prepare
+
+# Build the Tailwind stylesheet so the UI renders correctly.
+bundle exec rails tailwindcss:build
+
+exec "$@"

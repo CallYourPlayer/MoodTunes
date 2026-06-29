@@ -1,0 +1,60 @@
+<% content_for :title, "#{@playlist.title} · MoodTunes" %>
+
+<section data-playlist="<%= @playlist.slug %>" class="space-y-8">
+  <header class="rounded-2xl border border-white/10 bg-white/5 p-6 sm:p-8">
+    <div class="flex flex-wrap items-start justify-between gap-4">
+      <div class="min-w-0">
+        <h1 class="text-2xl font-bold sm:text-3xl"><%= @playlist.title %></h1>
+        <p class="mt-2 text-white/60">"<%= @playlist.description %>"</p>
+        <div class="mt-3 flex flex-wrap gap-2 text-xs">
+          <% if @playlist.mood.present? %>
+            <span class="rounded-full bg-indigo-500/20 px-3 py-1 capitalize text-indigo-200"><%= @playlist.mood %></span>
+          <% end %>
+          <% Array(@playlist.genres).each do |genre| %>
+            <span class="rounded-full bg-fuchsia-500/20 px-3 py-1 capitalize text-fuchsia-200"><%= genre %></span>
+          <% end %>
+        </div>
+      </div>
+
+      <%= button_to "↻ Rigenera playlist", regenerate_playlist_path(@playlist),
+            method: :post,
+            data: { turbo: false },
+            class: "flex-none rounded-xl bg-indigo-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-400" %>
+    </div>
+
+    <div class="mt-5 flex items-center gap-2 rounded-lg border border-white/10 bg-slate-900/60 px-3 py-2">
+      <span class="text-xs text-white/40">Link condivisibile</span>
+      <input type="text" readonly value="<%= playlist_url(@playlist) %>"
+             onclick="this.select()"
+             class="flex-1 truncate bg-transparent text-sm text-white/70 focus:outline-none">
+    </div>
+  </header>
+
+  <div class="rounded-2xl border border-white/10 bg-white/5 p-6 sm:p-8">
+    <h2 class="mb-3 text-sm font-medium">Aggiungi un brano</h2>
+    <div class="relative">
+      <input type="text" data-search-input
+             placeholder="Cerca per titolo o artista..."
+             autocomplete="off"
+             class="w-full rounded-xl border border-white/10 bg-slate-900/60 px-4 py-3 text-white placeholder-white/30 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/40">
+      <div data-search-results class="mt-2 space-y-1 empty:hidden"></div>
+    </div>
+  </div>
+
+  <div>
+    <h2 class="mb-3 text-sm font-medium text-white/60">
+      Brani <span data-track-count><%= @playlist.track_list.size %></span> ·
+      trascina per riordinare
+    </h2>
+    <ul data-track-list class="space-y-2">
+      <% @playlist.track_list.each do |track| %>
+        <%= render partial: "playlists/track", locals: { track: track, playlist: @playlist } %>
+      <% end %>
+    </ul>
+  </div>
+
+  <p class="text-center">
+    <%= link_to "← Crea una nuova playlist", root_path,
+          class: "text-sm text-indigo-300 hover:text-indigo-200" %>
+  </p>
+</section>

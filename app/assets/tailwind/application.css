@@ -1,0 +1,6 @@
+@import "tailwindcss";
+
+/* Tailwind CSS v4 content sources (paths relative to this file). */
+@source "../../views";
+@source "../../helpers";
+@source "../../javascript";
