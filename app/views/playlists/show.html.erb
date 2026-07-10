@@ -1,6 +1,6 @@
 <% content_for :title, "#{@playlist.title} · MoodTunes" %>
 
-<section data-playlist="<%= @playlist.slug %>" class="space-y-8">
+<section data-playlist="<%= @playlist.slug %>" class="space-y-8 pb-40">
   <header class="rounded-2xl border border-white/10 bg-white/5 p-6 sm:p-8">
     <div class="flex flex-wrap items-start justify-between gap-4">
       <div class="min-w-0">
@@ -57,4 +57,24 @@
     <%= link_to "← Crea una nuova playlist", root_path,
           class: "text-sm text-indigo-300 hover:text-indigo-200" %>
   </p>
+
+  <!-- Mini-player fisso: riproduzione continua dei video YouTube -->
+  <div data-yt-player
+       class="fixed inset-x-0 bottom-0 z-40 hidden border-t border-white/10 bg-slate-950/95 backdrop-blur">
+    <div class="mx-auto flex max-w-4xl items-center gap-3 px-4 py-3">
+      <div class="aspect-video w-40 flex-none overflow-hidden rounded-lg bg-black sm:w-56">
+        <div id="yt-frame" class="h-full w-full"></div>
+      </div>
+      <div class="min-w-0 flex-1">
+        <p class="text-xs uppercase tracking-wide text-white/40">In riproduzione</p>
+        <p data-yt-title class="truncate font-medium">—</p>
+        <p data-yt-artist class="truncate text-sm text-white/50"></p>
+      </div>
+      <button type="button" data-yt-close
+              title="Chiudi player"
+              class="flex-none rounded-lg border border-transparent px-2 py-1.5 text-white/40 transition hover:border-white/20 hover:text-white">
+        ✕
+      </button>
+    </div>
+  </div>
 </section>

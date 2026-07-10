@@ -1,5 +1,10 @@
 class PlaylistsController < ApplicationController
-  before_action :set_playlist, only: %i[show regenerate add_track remove_track reorder]
+  before_action :set_playlist, only: %i[show regenerate add_track remove_track reorder destroy]
+
+  # GET /playlists
+  def index
+    @playlists = Playlist.order(created_at: :desc)
+  end
 
   # POST /playlists
   def create
@@ -15,7 +20,7 @@ class PlaylistsController < ApplicationController
     tracks      = build_tracks(suggestions)
 
     if tracks.empty?
-      redirect_to root_path, alert: "Non sono riuscito a trovare i brani su Deezer. Riprova." and return
+      redirect_to root_path, alert: "Non sono riuscito a trovare i brani su YouTube. Riprova." and return
     end
 
     playlist = Playlist.create!(
@@ -37,6 +42,12 @@ class PlaylistsController < ApplicationController
 
   # GET /playlists/:slug
   def show
+  end
+
+  # DELETE /playlists/:slug
+  def destroy
+    @playlist.destroy
+    redirect_to playlists_path, notice: "Playlist eliminata."
   end
 
   # POST /playlists/:slug/regenerate
@@ -100,17 +111,17 @@ class PlaylistsController < ApplicationController
   end
 
   def track_params
-    params.require(:track).permit(:title, :artist, :deezer_id, :deezer_url, :cover, :preview)
+    params.require(:track).permit(:title, :artist, :youtube_id, :youtube_url, :thumbnail)
   end
 
-  # Resolve each suggested {title, artist} to a Deezer track, attaching a
+  # Resolve each suggested {title, artist} to a YouTube video, attaching a
   # stable uid and position so the front-end can reorder/remove reliably.
   def build_tracks(suggestions)
-    deezer = DeezerClient.new
+    youtube = YoutubeClient.new
 
     resolved = suggestions.filter_map do |s|
-      found = deezer.search_track(title: s["title"], artist: s["artist"])
-      next unless found && found["deezer_id"]
+      found = youtube.search_track(title: s["title"], artist: s["artist"])
+      next unless found && found["youtube_id"]
 
       found.merge("uid" => SecureRandom.hex(8))
     end

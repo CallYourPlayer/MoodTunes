@@ -12,7 +12,7 @@ gem "importmap-rails"
 gem "tailwindcss-rails"
 
 # External services
-gem "httparty"          # Deezer Search API
+gem "httparty"          # YouTube Data API v3
 gem "anthropic"         # Official Anthropic Ruby SDK (Claude)
 
 gem "bootsnap", require: false

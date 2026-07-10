@@ -4,6 +4,10 @@
     Racconta cosa stai facendo (es. <em>"lavoro al pc"</em>, <em>"corsa"</em>,
     <em>"viaggio in macchina"</em>) e lascia che l'AI costruisca la colonna sonora perfetta.
   </p>
+  <p class="mt-4">
+    <%= link_to "Vedi le playlist salvate →", playlists_path,
+          class: "text-sm font-medium text-indigo-300 hover:text-indigo-200" %>
+  </p>
 </section>
 
 <%= form_with url: playlists_path, method: :post, data: { generate_form: true },

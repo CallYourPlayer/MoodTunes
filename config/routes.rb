@@ -1,10 +1,10 @@
 Rails.application.routes.draw do
   root "home#index"
 
-  # Live Deezer search proxy (avoids CORS, keeps the front-end simple).
-  get "/deezer/search", to: "deezer_searches#index"
+  # Live YouTube search proxy (keeps the API key server-side).
+  get "/youtube/search", to: "youtube_searches#index"
 
-  resources :playlists, only: %i[create show], param: :slug do
+  resources :playlists, only: %i[index create show destroy], param: :slug do
     member do
       post   :regenerate
       post   :add_track

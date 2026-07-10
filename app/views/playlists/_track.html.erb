@@ -1,4 +1,5 @@
 <li data-uid="<%= track["uid"] %>"
+    data-youtube-id="<%= track["youtube_id"] %>"
     class="group flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-3 py-3 sm:gap-4">
   <button type="button" data-drag-handle
           title="Trascina per riordinare"
@@ -6,27 +7,26 @@
     ⠿
   </button>
 
-  <% if track["cover"].present? %>
-    <img src="<%= track["cover"] %>" alt=""
-         class="h-12 w-12 flex-none rounded-md object-cover" loading="lazy">
-  <% else %>
-    <div class="flex h-12 w-12 flex-none items-center justify-center rounded-md bg-slate-800 text-white/40">♪</div>
-  <% end %>
+  <button type="button" data-play
+          title="Riproduci"
+          class="relative h-12 w-12 flex-none overflow-hidden rounded-md bg-slate-800">
+    <% if track["thumbnail"].present? %>
+      <img src="<%= track["thumbnail"] %>" alt="" class="h-full w-full object-cover" loading="lazy">
+    <% else %>
+      <span class="flex h-full w-full items-center justify-center text-white/40">♪</span>
+    <% end %>
+    <span class="absolute inset-0 flex items-center justify-center bg-black/40 text-lg text-white opacity-0 transition group-hover:opacity-100">▶</span>
+  </button>
 
   <div class="min-w-0 flex-1">
     <p class="truncate font-medium"><%= track["title"] %></p>
     <p class="truncate text-sm text-white/50"><%= track["artist"] %></p>
   </div>
 
-  <% if track["preview"].present? %>
-    <audio controls preload="none" src="<%= track["preview"] %>"
-           class="hidden h-8 w-40 sm:block"></audio>
-  <% end %>
-
-  <% if track["deezer_url"].present? %>
-    <a href="<%= track["deezer_url"] %>" target="_blank" rel="noopener"
+  <% if track["youtube_url"].present? %>
+    <a href="<%= track["youtube_url"] %>" target="_blank" rel="noopener"
        class="flex-none rounded-lg border border-white/10 px-3 py-1.5 text-xs font-medium text-white/70 transition hover:border-white/30 hover:text-white">
-      Deezer ↗
+      YouTube ↗
     </a>
   <% end %>
 

@@ -2,7 +2,7 @@
 # optional mood and preferred genres) into a list of suggested songs.
 #
 # Returns an array of { "title" => ..., "artist" => ... } hashes that the
-# caller then resolves against Deezer.
+# caller then resolves against YouTube.
 class ClaudePlaylistGenerator
   MODEL = :"claude-sonnet-4-6"
   TRACK_COUNT = 12

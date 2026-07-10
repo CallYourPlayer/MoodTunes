@@ -16,7 +16,8 @@
           <span class="text-2xl">🎧</span>
           <span>Mood<span class="text-indigo-400">Tunes</span></span>
         <% end %>
-        <span class="text-xs text-white/40">playlist generate con l'AI</span>
+        <%= link_to "Le tue playlist", playlists_path,
+              class: "text-xs text-white/50 transition hover:text-white" %>
       </div>
     </header>
 
@@ -36,7 +37,7 @@
     </main>
 
     <footer class="mx-auto max-w-4xl px-4 py-10 text-center text-xs text-white/30">
-      Brani forniti da Deezer · Suggerimenti generati da Claude
+      Brani forniti da YouTube · Suggerimenti generati da Claude
     </footer>
   </body>
 </html>
