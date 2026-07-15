@@ -13,12 +13,12 @@ class ClaudePlaylistGenerator
     @client = client
   end
 
-  def generate(description:, mood: nil, genres: [])
+  def generate(description:, mood: nil, genres: [], exclude: [])
     message = @client.messages.create(
       model: MODEL,
       max_tokens: 4096,
       thinking: { type: "adaptive" },
-      messages: [{ role: "user", content: build_prompt(description, mood, genres) }]
+      messages: [{ role: "user", content: build_prompt(description, mood, genres, exclude) }]
     )
 
     parse_tracks(extract_text(message))
@@ -30,25 +30,41 @@ class ClaudePlaylistGenerator
 
   private
 
-  def build_prompt(description, mood, genres)
-    genres = Array(genres).reject(&:blank?)
+  def build_prompt(description, mood, genres, exclude = [])
+    genres  = Array(genres).reject(&:blank?)
+    exclude = Array(exclude).reject(&:blank?)
 
     <<~PROMPT
       You are an expert music curator. Build a playlist of #{TRACK_COUNT} real,
-      existing, well-known songs that fit the situation described below.
+      existing songs that fit the situation described below.
 
       Situation: "#{description}"
       Mood: #{mood.presence || "not specified"}
       Preferred genres: #{genres.any? ? genres.join(", ") : "any"}
 
       Reason about the activity, the desired energy and tempo, and the mood.
-      Prefer songs that are likely available on mainstream streaming services,
-      vary the artists, and avoid duplicates.
-
+      Favor variety: mix well-known tracks with lesser-known gems and deeper
+      cuts, span different artists (no artist twice), and don't default to the
+      same handful of obvious hits every time. Every song must still be a real,
+      existing track available on mainstream streaming services.
+      #{exclusion_block(exclude)}
       Respond with ONLY a JSON array (no markdown fences, no prose) of
       #{TRACK_COUNT} objects, each with exactly these keys:
         {"title": "Song title", "artist": "Artist name"}
     PROMPT
+  end
+
+  # When we know which songs recent playlists already used, tell Claude to steer
+  # clear of them so playlists stay fresh instead of recycling the same tracks.
+  def exclusion_block(exclude)
+    return "" if exclude.empty?
+
+    <<~BLOCK
+
+      Do NOT include any of these songs — they were already used in recent
+      playlists, so pick different ones:
+      #{exclude.map { |t| "- #{t}" }.join("\n")}
+    BLOCK
   end
 
   def extract_text(message)

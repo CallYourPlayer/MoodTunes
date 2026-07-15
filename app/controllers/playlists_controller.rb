@@ -16,8 +16,13 @@ class PlaylistsController < ApplicationController
       redirect_to root_path, alert: "Descrivi la situazione per generare una playlist." and return
     end
 
-    suggestions = ClaudePlaylistGenerator.new.generate(description: description, mood: mood, genres: genres)
-    tracks      = build_tracks(suggestions)
+    suggestions = ClaudePlaylistGenerator.new.generate(
+      description: description,
+      mood:        mood,
+      genres:      genres,
+      exclude:     recently_used_tracks
+    )
+    tracks = build_tracks(suggestions)
 
     if tracks.empty?
       redirect_to root_path, alert: "Non sono riuscito a trovare i brani su YouTube. Riprova." and return
@@ -55,7 +60,8 @@ class PlaylistsController < ApplicationController
     suggestions = ClaudePlaylistGenerator.new.generate(
       description: @playlist.description,
       mood:        @playlist.mood,
-      genres:      @playlist.genres
+      genres:      @playlist.genres,
+      exclude:     recently_used_tracks(extra: @playlist.track_list)
     )
     tracks = build_tracks(suggestions)
 
@@ -103,6 +109,26 @@ class PlaylistsController < ApplicationController
   end
 
   private
+
+  # Collect "Title — Artist" keys from the most recent playlists (plus any extra
+  # tracks, e.g. the playlist being regenerated) so we can ask Claude to avoid
+  # them and keep new playlists varied instead of recycling the same songs.
+  def recently_used_tracks(extra: [], playlists: 15, limit: 60)
+    recent = Playlist.order(created_at: :desc).limit(playlists).flat_map(&:track_list)
+
+    (recent + Array(extra))
+      .filter_map { |t| track_key(t) }
+      .uniq
+      .first(limit)
+  end
+
+  def track_key(track)
+    title  = track["title"]
+    artist = track["artist"]
+    return if title.blank? || artist.blank?
+
+    "#{title} — #{artist}"
+  end
 
   def set_playlist
     @playlist = Playlist.find_by!(slug: params[:slug])
