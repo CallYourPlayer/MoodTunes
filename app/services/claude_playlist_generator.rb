@@ -61,7 +61,7 @@ class ClaudePlaylistGenerator
 
     <<~BLOCK
 
-      Do NOT include any of these songs — they were already used in recent
+      Do NOT include any of these songs - they were already used in recent
       playlists, so pick different ones:
       #{exclude.map { |t| "- #{t}" }.join("\n")}
     BLOCK
