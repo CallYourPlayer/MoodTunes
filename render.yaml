@@ -12,7 +12,7 @@ services:
     runtime: ruby
     plan: free
     buildCommand: "bundle install && bundle exec rails assets:precompile && bundle exec rails assets:clean"
-    startCommand: "bundle exec rails db:migrate && bundle exec puma -C config/puma.rb"
+    startCommand: "bundle exec rails db:migrate && bundle exec rails db:seed && bundle exec puma -C config/puma.rb"
     envVars:
       - key: DATABASE_URL
         fromDatabase:
@@ -22,6 +22,10 @@ services:
         sync: false                 # set manually in the Render dashboard
       - key: YOUTUBE_API_KEY
         sync: false                 # set manually in the Render dashboard
+      - key: OWNER_EMAIL
+        sync: false                 # owner account created/updated by db:seed
+      - key: OWNER_PASSWORD
+        sync: false                 # set a strong password in the dashboard
       - key: SECRET_KEY_BASE
         generateValue: true
       - key: RAILS_ENV

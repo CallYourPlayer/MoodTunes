@@ -1,11 +1,14 @@
+<% owner = local_assigns.fetch(:owner, false) %>
 <li data-uid="<%= track["uid"] %>"
     data-youtube-id="<%= track["youtube_id"] %>"
     class="group flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-3 py-3 sm:gap-4">
-  <button type="button" data-drag-handle
-          title="Trascina per riordinare"
-          class="cursor-grab select-none px-1 text-lg text-white/30 hover:text-white/70 active:cursor-grabbing">
-    ⠿
-  </button>
+  <% if owner %>
+    <button type="button" data-drag-handle
+            title="Trascina per riordinare"
+            class="cursor-grab select-none px-1 text-lg text-white/30 hover:text-white/70 active:cursor-grabbing">
+      ⠿
+    </button>
+  <% end %>
 
   <button type="button" data-play
           title="Riproduci"
@@ -30,9 +33,11 @@
     </a>
   <% end %>
 
-  <button type="button" data-remove
-          title="Rimuovi"
-          class="flex-none rounded-lg border border-transparent px-2 py-1.5 text-xs text-white/40 transition hover:border-red-500/40 hover:text-red-300">
-    ✕
-  </button>
+  <% if owner %>
+    <button type="button" data-remove
+            title="Rimuovi"
+            class="flex-none rounded-lg border border-transparent px-2 py-1.5 text-xs text-white/40 transition hover:border-red-500/40 hover:text-red-300">
+      ✕
+    </button>
+  <% end %>
 </li>

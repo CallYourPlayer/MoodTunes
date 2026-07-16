@@ -16,10 +16,12 @@
         </div>
       </div>
 
-      <%= button_to "↻ Rigenera playlist", regenerate_playlist_path(@playlist),
-            method: :post,
-            data: { turbo: false },
-            class: "flex-none rounded-xl bg-indigo-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-400" %>
+      <% if @owner %>
+        <%= button_to "↻ Rigenera playlist", regenerate_playlist_path(@playlist),
+              method: :post,
+              data: { turbo: false },
+              class: "flex-none rounded-xl bg-indigo-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-400" %>
+      <% end %>
     </div>
 
     <div class="mt-5 flex items-center gap-2 rounded-lg border border-white/10 bg-slate-900/60 px-3 py-2">
@@ -30,32 +32,42 @@
     </div>
   </header>
 
-  <div class="rounded-2xl border border-white/10 bg-white/5 p-6 sm:p-8">
-    <h2 class="mb-3 text-sm font-medium">Aggiungi un brano</h2>
-    <div class="relative">
-      <input type="text" data-search-input
-             placeholder="Cerca per titolo o artista..."
-             autocomplete="off"
-             class="w-full rounded-xl border border-white/10 bg-slate-900/60 px-4 py-3 text-white placeholder-white/30 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/40">
-      <div data-search-results class="mt-2 space-y-1 empty:hidden"></div>
+  <% if @owner %>
+    <div class="rounded-2xl border border-white/10 bg-white/5 p-6 sm:p-8">
+      <h2 class="mb-3 text-sm font-medium">Aggiungi un brano</h2>
+      <div class="relative">
+        <input type="text" data-search-input
+               placeholder="Cerca per titolo o artista..."
+               autocomplete="off"
+               class="w-full rounded-xl border border-white/10 bg-slate-900/60 px-4 py-3 text-white placeholder-white/30 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/40">
+        <div data-search-results class="mt-2 space-y-1 empty:hidden"></div>
+      </div>
     </div>
-  </div>
+  <% end %>
 
   <div>
     <h2 class="mb-3 text-sm font-medium text-white/60">
-      Brani <span data-track-count><%= @playlist.track_list.size %></span> ·
-      trascina per riordinare
+      Brani <span data-track-count><%= @playlist.track_list.size %></span><% if @owner %> ·
+      trascina per riordinare<% end %>
     </h2>
     <ul data-track-list class="space-y-2">
       <% @playlist.track_list.each do |track| %>
-        <%= render partial: "playlists/track", locals: { track: track, playlist: @playlist } %>
+        <%= render partial: "playlists/track", locals: { track: track, playlist: @playlist, owner: @owner } %>
       <% end %>
     </ul>
   </div>
 
   <p class="text-center">
-    <%= link_to "← Crea una nuova playlist", root_path,
-          class: "text-sm text-indigo-300 hover:text-indigo-200" %>
+    <% if @owner %>
+      <%= link_to "← Crea una nuova playlist", root_path,
+            class: "text-sm text-indigo-300 hover:text-indigo-200" %>
+    <% elsif logged_in? %>
+      <%= link_to "← Crea la tua playlist", root_path,
+            class: "text-sm text-indigo-300 hover:text-indigo-200" %>
+    <% else %>
+      <%= link_to "Crea le tue playlist su MoodTunes →", signup_path,
+            class: "text-sm text-indigo-300 hover:text-indigo-200" %>
+    <% end %>
   </p>
 
   <!-- Mini-player fisso: riproduzione continua dei video YouTube -->

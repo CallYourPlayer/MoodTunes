@@ -1,9 +1,13 @@
 class PlaylistsController < ApplicationController
-  before_action :set_playlist, only: %i[show regenerate add_track remove_track reorder destroy]
+  # The public show page is reachable by anyone with the share link; every
+  # other action requires an authenticated owner.
+  before_action :authenticate_user!, except: :show
+  before_action :set_public_playlist, only: :show
+  before_action :set_owned_playlist,  only: %i[regenerate add_track remove_track reorder destroy]
 
   # GET /playlists
   def index
-    @playlists = Playlist.order(created_at: :desc)
+    @playlists = current_user.playlists.order(created_at: :desc)
   end
 
   # POST /playlists
@@ -28,7 +32,7 @@ class PlaylistsController < ApplicationController
       redirect_to root_path, alert: "Non sono riuscito a trovare i brani su YouTube. Riprova." and return
     end
 
-    playlist = Playlist.create!(
+    playlist = current_user.playlists.create!(
       title:       derive_title(description, mood),
       description: description,
       mood:        mood,
@@ -45,8 +49,9 @@ class PlaylistsController < ApplicationController
     redirect_to root_path, alert: "Si è verificato un errore imprevisto. Riprova."
   end
 
-  # GET /playlists/:slug
+  # GET /playlists/:slug  (public share page)
   def show
+    @owner = logged_in? && @playlist.user_id == current_user.id
   end
 
   # DELETE /playlists/:slug
@@ -84,7 +89,7 @@ class PlaylistsController < ApplicationController
     updated = reindex(@playlist.track_list + [track])
     @playlist.update!(tracks: updated)
 
-    render partial: "playlists/track", locals: { track: updated.last, playlist: @playlist }
+    render partial: "playlists/track", locals: { track: updated.last, playlist: @playlist, owner: true }
   end
 
   # DELETE /playlists/:slug/remove_track?uid=...
@@ -130,10 +135,17 @@ class PlaylistsController < ApplicationController
     "#{title} — #{artist}"
   end
 
-  def set_playlist
+  def set_public_playlist
     @playlist = Playlist.find_by!(slug: params[:slug])
   rescue ActiveRecord::RecordNotFound
     redirect_to root_path, alert: "Playlist non trovata." and return
+  end
+
+  # Scope to the current user so nobody can edit a playlist they don't own.
+  def set_owned_playlist
+    @playlist = current_user.playlists.find_by!(slug: params[:slug])
+  rescue ActiveRecord::RecordNotFound
+    redirect_to playlists_path, alert: "Playlist non trovata o non autorizzata." and return
   end
 
   def track_params

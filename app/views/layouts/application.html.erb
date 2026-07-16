@@ -16,8 +16,22 @@
           <span class="text-2xl">🎧</span>
           <span>Mood<span class="text-indigo-400">Tunes</span></span>
         <% end %>
-        <%= link_to "Le tue playlist", playlists_path,
-              class: "text-xs text-white/50 transition hover:text-white" %>
+        <nav class="flex items-center gap-4 text-xs">
+          <% if logged_in? %>
+            <%= link_to "Le tue playlist", playlists_path,
+                  class: "text-white/50 transition hover:text-white" %>
+            <%= link_to "Password", password_path,
+                  class: "text-white/50 transition hover:text-white" %>
+            <span class="hidden text-white/30 sm:inline"><%= current_user.email %></span>
+            <%= button_to "Esci", logout_path, method: :delete, data: { turbo: false },
+                  class: "rounded-lg border border-white/10 px-3 py-1.5 text-white/60 transition hover:border-white/30 hover:text-white" %>
+          <% else %>
+            <%= link_to "Accedi", login_path,
+                  class: "text-white/50 transition hover:text-white" %>
+            <%= link_to "Registrati", signup_path,
+                  class: "rounded-lg bg-indigo-500 px-3 py-1.5 font-medium text-white transition hover:bg-indigo-400" %>
+          <% end %>
+        </nav>
       </div>
     </header>
 

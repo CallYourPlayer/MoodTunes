@@ -10,6 +10,9 @@ bundle check || bundle install
 # Create and migrate the database (idempotent).
 bundle exec rails db:prepare
 
+# Ensure the owner account exists and adopt any ownerless playlists (idempotent).
+bundle exec rails db:seed
+
 # Build the Tailwind stylesheet so the UI renders correctly.
 bundle exec rails tailwindcss:build
 

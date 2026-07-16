@@ -1,0 +1,41 @@
+<% content_for :title, "Cambia password · MoodTunes" %>
+
+<section class="mx-auto max-w-md">
+  <h1 class="mb-2 text-2xl font-bold sm:text-3xl">Cambia password</h1>
+  <p class="mb-6 text-sm text-white/60">Aggiorna la password del tuo account.</p>
+
+  <%= form_with url: password_path, method: :patch,
+        class: "space-y-5 rounded-2xl border border-white/10 bg-white/5 p-6 sm:p-8" do |f| %>
+
+    <div>
+      <%= label_tag :current_password, "Password attuale", class: "mb-2 block text-sm font-medium" %>
+      <%= password_field_tag :current_password, nil,
+            required: true, autocomplete: "current-password",
+            class: "w-full rounded-xl border border-white/10 bg-slate-900/60 px-4 py-3 text-white placeholder-white/30 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/40" %>
+    </div>
+
+    <div>
+      <%= label_tag "user[password]", "Nuova password", class: "mb-2 block text-sm font-medium" %>
+      <%= password_field_tag "user[password]", nil,
+            required: true, autocomplete: "new-password",
+            class: "w-full rounded-xl border border-white/10 bg-slate-900/60 px-4 py-3 text-white placeholder-white/30 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/40" %>
+      <p class="mt-1 text-xs text-white/40">Almeno 8 caratteri.</p>
+    </div>
+
+    <div>
+      <%= label_tag "user[password_confirmation]", "Conferma nuova password", class: "mb-2 block text-sm font-medium" %>
+      <%= password_field_tag "user[password_confirmation]", nil,
+            required: true, autocomplete: "new-password",
+            class: "w-full rounded-xl border border-white/10 bg-slate-900/60 px-4 py-3 text-white placeholder-white/30 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/40" %>
+    </div>
+
+    <button type="submit"
+            class="w-full rounded-xl bg-indigo-500 px-6 py-3 font-semibold text-white transition hover:bg-indigo-400">
+      Aggiorna password
+    </button>
+  <% end %>
+
+  <p class="mt-6 text-center">
+    <%= link_to "← Torna alle playlist", playlists_path, class: "text-sm text-indigo-300 hover:text-indigo-200" %>
+  </p>
+</section>

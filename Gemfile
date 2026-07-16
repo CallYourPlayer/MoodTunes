@@ -15,6 +15,9 @@ gem "tailwindcss-rails"
 gem "httparty"          # YouTube Data API v3
 gem "anthropic"         # Official Anthropic Ruby SDK (Claude)
 
+# Authentication (has_secure_password)
+gem "bcrypt", "~> 3.1"
+
 gem "bootsnap", require: false
 gem "tzinfo-data", platforms: %i[windows jruby]
 

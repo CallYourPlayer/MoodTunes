@@ -2,6 +2,10 @@ class Playlist < ApplicationRecord
   MOODS  = %w[felice concentrato energico rilassato malinconico].freeze
   GENRES = %w[pop rock jazz elettronica hip-hop classica].freeze
 
+  # Optional so historical playlists without an owner keep working; new
+  # playlists are always created through an authenticated user.
+  belongs_to :user, optional: true
+
   before_validation :assign_slug, on: :create
 
   validates :title, presence: true

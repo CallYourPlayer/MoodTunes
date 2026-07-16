@@ -1,4 +1,6 @@
 class YoutubeSearchesController < ApplicationController
+  before_action :authenticate_user!
+
   # GET /youtube/search?q=...
   # Server-side proxy so the browser never sees the YouTube API key.
   def index

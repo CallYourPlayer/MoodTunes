@@ -31,7 +31,11 @@ continua). Ogni playlist ha una pagina pubblica condivisibile.
 - **Aggiungi brani**: ricerca live su YouTube mentre scrivi, aggiunta con un click.
 - **Rimuovi brani**: pulsante per ogni brano.
 - **Drag & drop** per riordinare, con salvataggio immediato nel database.
-- Nessuna autenticazione utente.
+- **Autenticazione utente** (email + password, `has_secure_password`): registrazione,
+  login e logout. Ogni playlist appartiene all'utente che l'ha creata; solo il
+  proprietario può rigenerarla, aggiungere/rimuovere brani, riordinare o eliminarla.
+- La pagina `/playlists/:slug` resta **pubblica e condivisibile**: chiunque abbia il
+  link può ascoltare la playlist, ma i comandi di modifica compaiono solo al proprietario.
 
 ---
 
@@ -95,6 +99,8 @@ bin/rails server
 | `RAILS_SERVE_STATIC_FILES`| produzione             | `true` per servire gli asset compilati.                  |
 | `RAILS_LOG_TO_STDOUT`     | produzione             | `true` per loggare su stdout.                            |
 | `WEB_CONCURRENCY`         | produzione (opzionale) | Numero di worker Puma.                                   |
+| `OWNER_EMAIL`             | opzionale              | Email dell'account creato da `db:seed` (default `alfredotorre82@gmail.com`). |
+| `OWNER_PASSWORD`          | opzionale              | Password di quell'account (default `changeme123` — **da cambiare**).        |
 
 > Nota: il progetto **non** usa `config/credentials.yml.enc` né `master.key`.
 > In produzione il segreto arriva da `SECRET_KEY_BASE`.
@@ -151,6 +157,16 @@ Environment Variable** → salva (il servizio viene ridistribuito).
 
 ## Modello dati
 
+`User`:
+
+| Campo             | Tipo   | Note                                          |
+| ----------------- | ------ | --------------------------------------------- |
+| `email`           | string | Univoca, normalizzata in minuscolo.           |
+| `password_digest` | string | Hash bcrypt (`has_secure_password`).          |
+| timestamps        |        | `created_at`, `updated_at`.                   |
+
+Un `User` `has_many :playlists`.
+
 `Playlist`:
 
 | Campo         | Tipo    | Note                                             |
@@ -161,6 +177,7 @@ Environment Variable** → salva (il servizio viene ridistribuito).
 | `genres`      | jsonb   | Array di generi selezionati.                     |
 | `tracks`      | jsonb   | Array di brani (titolo, artista, dati YouTube).  |
 | `slug`        | string  | Identificatore univoco condivisibile (URL).      |
+| `user_id`     | bigint  | Proprietario (nullable per playlist storiche).   |
 | timestamps    |         | `created_at`, `updated_at`.                      |
 
 Ogni brano in `tracks` ha: `uid`, `position`, `title`, `artist`, `youtube_id`,
@@ -171,7 +188,14 @@ riordino; `youtube_id` è il `videoId` usato per l'embed.
 
 | Metodo | Path                              | Descrizione                          |
 | ------ | --------------------------------- | ------------------------------------ |
-| GET    | `/`                               | Homepage con il form.                |
+| GET    | `/signup`                         | Form di registrazione.               |
+| POST   | `/signup`                         | Crea l'account e autentica.          |
+| GET    | `/login`                          | Form di accesso.                     |
+| POST   | `/login`                          | Autentica l'utente.                  |
+| DELETE | `/logout`                         | Termina la sessione.                 |
+| GET    | `/password`                       | Form cambio password (login richiesto). |
+| PATCH  | `/password`                       | Aggiorna la password dell'utente.    |
+| GET    | `/`                               | Homepage con il form (login richiesto). |
 | POST   | `/playlists`                      | Genera e salva una playlist.         |
 | GET    | `/playlists/:slug`                | Pagina pubblica della playlist.      |
 | POST   | `/playlists/:slug/regenerate`     | Rigenera i brani (stesso slug).      |
