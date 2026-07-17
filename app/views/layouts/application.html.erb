@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title><%= content_for?(:title) ? yield(:title) : "MoodTunes" %></title>
     <meta name="description" content="Genera playlist musicali a partire da una descrizione, con l'aiuto dell'AI.">
+    <%= yield :head %>
     <%= csrf_meta_tags %>
     <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
